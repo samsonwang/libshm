@@ -19,8 +19,8 @@ using namespace std;
 
 //==============================================================================
 //
-//                   CSharedMemKey
-//                   共享内存key
+//                   CSharedMemLock
+//                   共享内存锁
 //
 //==============================================================================
 
@@ -37,8 +37,8 @@ public:
 	// 设置等待的时间
 	void SetWaitTime(size_t nWaitMs);
 	
-	void Lock() const;
-	void UnLock() const;
+	void Lock();
+	void Unlock();
 
 private:
 	string m_strLockName;
@@ -49,6 +49,26 @@ private:
 #elif defined(OS_WIN)
 	HANDLE m_hMutex;
 #endif
+};
+
+//==============================================================================
+//
+//                   CShmAutoLock
+//                   共享内存自动锁（自动加锁解锁）
+//
+//==============================================================================
+class CShmAutoLock
+{
+public:
+	CShmAutoLock(CSharedMemLock* pLock);
+	~CShmAutoLock();
+	
+private:
+	CShmAutoLock(const CShmAutoLock& objLock);
+	CShmAutoLock& operator=(const CShmAutoLock& objLock);
+	
+private:
+	CSharedMemLock* m_pLock;
 };
 
 #endif /* SHAREDMEMLOCK_H */

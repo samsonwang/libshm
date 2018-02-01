@@ -47,7 +47,7 @@ void CSharedMemLock::SetWaitTime(size_t nWaitMs)
 	m_nWaitMs = nWaitMs;
 }
 	
-void CSharedMemLock::Lock() const
+void CSharedMemLock::Lock()
 {
 	timespec ts;
   	clock_gettime(CLOCK_REALTIME, &ts );     //获取当前时间
@@ -58,16 +58,34 @@ void CSharedMemLock::Lock() const
  	while( (nRet != 0) && (errno ==  EINTR) )   //等待信号量，errno==EINTR屏蔽其他信号事件引起的等待中断  
   	{
   		nRet = sem_timedwait(m_pSem, &ts );
-  	}
-
-	
-	
+  	}	
 }
 
-void CSharedMemLock::UnLock() const
+void CSharedMemLock::Unlock()
 {
 	//释放共享资源
 	sem_post(m_pSem);
+}
+
+
+
+//==============================================================================
+//
+//                   CShmAutoLock
+//                   共享内存自动锁（自动加锁解锁）
+//
+//==============================================================================
+CShmAutoLock::CShmAutoLock(CSharedMemLock* pLock)
+	: m_pLock(pLock)
+{
+	assert(m_pLock);
+	m_pLock->Lock();
+}
+
+CShmAutoLock::~CShmAutoLock()
+{
+	assert(m_pLock);
+	m_pLock->Unlock();
 }
 
 
