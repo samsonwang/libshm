@@ -8,11 +8,14 @@
 #ifndef SHAREDMEMLOCK_H
 #define SHAREDMEMLOCK_H
 
-#include "OperatingSystemDef.h"
 #include <string>
+#include "OperatingSystemDef.h"
+#include "TypeDef.h"
 
 #if defined(OS_UNIX)
 #include <semaphore.h>
+#elif defined(OS_WIN)
+#include <windows.h>
 #endif
 
 using namespace std;
@@ -24,7 +27,7 @@ using namespace std;
 //
 //==============================================================================
 
-class CSharedMemLock
+class MY_EXT_CLASS CSharedMemLock
 {
 public:
 	CSharedMemLock();
@@ -57,7 +60,7 @@ private:
 //                   共享内存自动锁（自动加锁解锁）
 //
 //==============================================================================
-class CShmAutoLock
+class MY_EXT_CLASS CShmAutoLock
 {
 public:
 	CShmAutoLock(CSharedMemLock* pLock);

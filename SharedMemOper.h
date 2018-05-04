@@ -20,7 +20,7 @@ using namespace std;
 //
 //==============================================================================
 
-class CSharedMemOper : public CObjectBase
+class MY_EXT_CLASS CSharedMemOper : public CObjectBase
 {
 public:
 	CSharedMemOper();
@@ -30,14 +30,14 @@ public:
 	// 设定共享内存的key
 	void SetSharedMemKey(shmkey_t objShmKey);
 
-	// 创建或映射一个指定“Key”的共享内存。
-	bool CreateSharedMem(size_t nSize);
+	// 创建并映射一个指定“Key”的共享内存。
+	virtual bool CreateSharedMem(size_t nSize);
 	// 映射共享内存
-	bool AttachSharedMem();
-	// 取消共享内存的映射(这个接口不会删除共享内存)
+	virtual bool AttachSharedMem();
+	// 取消共享内存的映射
 	bool DetachSharedMem();
 	// 释放共享内存资源（从系统中删除该共享内存）
-	bool ReleaseSharedMem();
+	virtual bool ReleaseSharedMem();
 
 	// 获取实际共享内存的大小
 	size_t GetShmSize() const;
@@ -47,6 +47,10 @@ public:
 protected:
 	// 当前的共享内存是否有效
 	bool IsShmValid() const;
+
+private:
+	CSharedMemOper(const CSharedMemOper& other);
+	CSharedMemOper& operator=(const CSharedMemOper& other);
 	
 protected:
 	shmid_t m_objShmId;			// 标识共享内存的id

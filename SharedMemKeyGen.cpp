@@ -62,7 +62,22 @@ bool CSharedMemKeyGen::GenerateKey()
 	pFile = NULL;
 
 	// 生成key
+#if defined(OS_UNIX)
 	m_objShmKey = ftok(strKeyFileFullPath.c_str(), m_nId);
+#elif defined(OS_WIN)
+	BY_HANDLE_FILE_INFORMATION objFileInfo;
+	HANDLE hFile = CreateFile(strKeyFileFullPath.c_str(), 0, 0, NULL, OPEN_EXISTING, 0, NULL);
+	GetFileInformationByHandle(hFile, &objFileInfo);
+	objFileInfo;
+	char szBuffer[1024];
+	snprintf(szBuffer, sizeof(szBuffer), "%d-%u-%u%u",
+		m_nId,
+		objFileInfo.dwVolumeSerialNumber,
+		objFileInfo.nFileIndexHigh,
+		objFileInfo.nFileIndexLow);
+	m_objShmKey = szBuffer;
+#endif
+
 	if(m_objShmKey == SHM_KEY_INVALID)
 	{
 //		LogImportant("【CStatusMemOper::InitShmInfo】ftok() fail! fname=%s, id=%d. errno=%d, info=%s",

@@ -21,7 +21,7 @@ using namespace std;
 //
 //==============================================================================
 
-class CSharedMemKeyGen
+class MY_EXT_CLASS CSharedMemKeyGen
 {
 public:
 	CSharedMemKeyGen();
