@@ -9,7 +9,6 @@
 #define SHAREDMEMKEYGEN_H
 
 #include <string>
-#include "OperatingSystemDef.h"
 #include "SharedMemDef.h"
 
 using namespace std;

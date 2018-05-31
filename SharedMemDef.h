@@ -8,8 +8,8 @@
 #ifndef SHAREDMEMDEF_H
 #define SHAREDMEMDEF_H
 
-#include "OperatingSystemDef.h"
 #include "TypeDef.h"
+#include "OSDef.h"
 
 #if defined(OS_UNIX)
 	#include <sys/ipc.h>
@@ -35,3 +35,4 @@
 #endif
 
 #endif // SHAREDMEMDEF_H
+
