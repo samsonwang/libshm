@@ -9,7 +9,7 @@
 #define SHAREDMEMDEF_H
 
 #include "TypeDef.h"
-#include "OSDef.h"
+#include "OperationSystemDef.h"
 
 #if defined(OS_UNIX)
 	#include <sys/ipc.h>

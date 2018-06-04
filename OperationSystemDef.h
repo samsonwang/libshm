@@ -5,8 +5,8 @@
 // describe : 使用系统宏定义检测操作系统
 //==============================================================================
 
-#ifndef OSDEF_H
-#define OSDEF_H
+#ifndef OPERATIONSYSTEMDEF_H
+#define OPERATIONSYSTEMDEF_H
 
 #if defined(_WIN32) || defined(_WIN64) || defined(__WIN32__) || defined(__WINDOWS__)
 #define OS_WIN
@@ -24,5 +24,5 @@
 #define OS_HP_UX
 #endif
 
-#endif /* OSDEF_H */
+#endif /* OPERATIONSYSTEMDEF_H */
 
