@@ -1,4 +1,3 @@
-#Makefile for libshm
 
 CXX	 = g++
 LD	 = g++
@@ -6,19 +5,11 @@ AR	 = ar rc
 
 CXX_STD = -std=c++0x
 DEBUG_FLAG = -g
-WARNING_FLAGS = -Wall -Wextra -pedantic \
-			-Wswitch-default -Wundef -Wpointer-arith \
-			-Woverloaded-virtual -Wnon-virtual-dtor \
-			-Wno-unused-parameter -Wfloat-equal \
-			-Wformat-security -Wformat-nonliteral \
-			-Wuninitialized -Wshadow -Wlogical-op \
-			-Wmissing-declarations -Winline
-
-CXX_MACROS = -DLOGDEBUG
+WARNING_FLAGS = -Wall -Wextra
+CXX_MACROS = -DDEBUG
 EXTRA_FLAGS = -Wfatal-errors
 CXXFLAGS = $(CXX_STD) $(DEBUG_FLAG) $(WARNING_FLAGS) $(CXX_MACROS) \
 		-ftemplate-depth-25 $(EXTRA_FLAGS)
-
 INCS = -I../
 
 SRCS = $(wildcard *.cpp)
@@ -31,7 +22,7 @@ OUTPUT = shm_create.out shm_attach.out
 all: ${OUTPUT}
 
 %.out: %.cpp
-	$(CXX) $(CXXFLAGS) $(INCS) $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCS) $< ../libshm -o $@
 
 #${OUTPUT}: $(OBJS)
 #	$(AR) $@ $(OBJS) $(EXTRA_LIB)

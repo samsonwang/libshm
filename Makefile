@@ -6,15 +6,8 @@ AR	 = ar rc
 
 CXX_STD = -std=c++0x
 DEBUG_FLAG = -g
-WARNING_FLAGS = -Wall -Wextra -pedantic \
-			-Wswitch-default -Wundef -Wpointer-arith \
-			-Woverloaded-virtual -Wnon-virtual-dtor \
-			-Wno-unused-parameter -Wfloat-equal \
-			-Wformat-security -Wformat-nonliteral \
-			-Wuninitialized -Wshadow -Wlogical-op \
-			-Wmissing-declarations -Winline
-
-CXX_MACROS = -DLOGDEBUG
+WARNING_FLAGS = -Wall -Wextra -pedantic
+CXX_MACROS = -DDEBUG
 EXTRA_FLAGS = -Wfatal-errors
 CXXFLAGS = $(CXX_STD) $(DEBUG_FLAG) $(WARNING_FLAGS) $(CXX_MACROS) \
 		-ftemplate-depth-25 $(EXTRA_FLAGS)
