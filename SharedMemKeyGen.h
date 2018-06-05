@@ -11,8 +11,6 @@
 #include <string>
 #include "SharedMemDef.h"
 
-using namespace std;
-
 //==============================================================================
 //
 //                   CSharedMemKeyGen
@@ -24,11 +22,11 @@ class EXT_CLASS CSharedMemKeyGen
 {
 public:
 	CSharedMemKeyGen();
-	CSharedMemKeyGen(const string& strKeyFile, int nId);
+	CSharedMemKeyGen(const std::string& strKeyFile, int nId);
 
 public:
 	// 设置Key使用的文件和offset
-	void SetParam(const string& strKeyFile, int nId);
+	void SetParam(const std::string& strKeyFile, int nId);
 	// 生成key
 	bool GenerateKey();
 	// 判断是否有效
@@ -37,9 +35,9 @@ public:
 	shmkey_t GetKey() const;
 
 private:
-	shmkey_t	m_objShmKey;		// 生成的key
-	string 		m_strKeyFile;		// 用于生成key的文件
-	int			m_nId;				// 用于生成key的offset
+	shmkey_t	    m_objShmKey;		// 生成的key
+    std::string 	m_strKeyFile;		// 用于生成key的文件
+	int			    m_nId;				// 用于生成key的offset
 };
 
 #endif /* SHAREDMEMKEYGEN_H */

@@ -22,7 +22,7 @@ CSharedMemKeyGen::CSharedMemKeyGen()
 
 }
 
-CSharedMemKeyGen::CSharedMemKeyGen(const string& strKeyFile, int nId)
+CSharedMemKeyGen::CSharedMemKeyGen(const std::string& strKeyFile, int nId)
 	: m_objShmKey(SHM_KEY_INVALID),
 	  m_strKeyFile(strKeyFile),
 	  m_nId(nId)
@@ -30,7 +30,7 @@ CSharedMemKeyGen::CSharedMemKeyGen(const string& strKeyFile, int nId)
 
 }
 
-void CSharedMemKeyGen::SetParam(const string& strKeyFile, int nId)
+void CSharedMemKeyGen::SetParam(const std::string& strKeyFile, int nId)
 {
 	m_strKeyFile = strKeyFile;
 	m_nId = nId;
