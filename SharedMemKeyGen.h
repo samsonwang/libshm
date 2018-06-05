@@ -20,7 +20,7 @@ using namespace std;
 //
 //==============================================================================
 
-class MY_EXT_CLASS CSharedMemKeyGen
+class EXT_CLASS CSharedMemKeyGen
 {
 public:
 	CSharedMemKeyGen();

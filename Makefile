@@ -19,8 +19,7 @@ EXTRA_FLAGS = -Wfatal-errors
 CXXFLAGS = $(CXX_STD) $(DEBUG_FLAG) $(WARNING_FLAGS) $(CXX_MACROS) \
 		-ftemplate-depth-25 $(EXTRA_FLAGS)
 
-INCS = -I$(XMLPATH) -I$(SYSLIBPATH) -I$(TOOLPATH) -I$(PROBASELPATH) \
-		-I$(DEVLIBPATH) -I$(LOADDEVICEPATH)
+INCS = 
 
 SRCS = $(wildcard *.cpp)
 OBJS = $(patsubst %.cpp, %.o, $(SRCS))

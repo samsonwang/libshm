@@ -9,9 +9,6 @@
 #define SHAREDMEMOPER_H
 
 #include "SharedMemDef.h"
-#include "ObjectBase.h"
-
-using namespace std;
 
 //==============================================================================
 //
@@ -20,7 +17,7 @@ using namespace std;
 //
 //==============================================================================
 
-class MY_EXT_CLASS CSharedMemOper : public CObjectBase
+class EXT_CLASS CSharedMemOper
 {
 public:
 	CSharedMemOper();

@@ -23,13 +23,13 @@ CSharedMemLock::CSharedMemLock()
 
 }
 
-CSharedMemLock::CSharedMemLock(const string& strName)
+CSharedMemLock::CSharedMemLock(const std::string& strName)
 	: m_nWaitMs(SHM_LOCK_WAIT_INFI)
 {
 	SetLockName(strName);
 }
 
-void CSharedMemLock::SetLockName(const string& strName)
+void CSharedMemLock::SetLockName(const std::string& strName)
 {
 	assert(!strName.empty());
 	m_strLockName = strName;

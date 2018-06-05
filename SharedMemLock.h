@@ -10,15 +10,7 @@
 
 #include <string>
 #include "OperatingSystemDef.h"
-#include "TypeDef.h"
-
-#if defined(OS_UNIX)
-#include <semaphore.h>
-#elif defined(OS_WIN)
-#include <windows.h>
-#endif
-
-using namespace std;
+#include "SharedMemDef.h"
 
 //==============================================================================
 //
@@ -27,15 +19,15 @@ using namespace std;
 //
 //==============================================================================
 
-class MY_EXT_CLASS CSharedMemLock
+class EXT_CLASS CSharedMemLock
 {
 public:
 	CSharedMemLock();
-	CSharedMemLock(const string& strName);
+	CSharedMemLock(const std::string& strName);
 	
 public:
 	// 设置锁的名称
-	void SetLockName(const string& strName);
+	void SetLockName(const std::string& strName);
 
 	// 设置等待的时间
 	void SetWaitTime(size_t nWaitMs);
@@ -44,7 +36,7 @@ public:
 	void Unlock();
 
 private:
-	string m_strLockName;
+    std::string m_strLockName;
 	size_t m_nWaitMs;
 
 #if defined(OS_UNIX)
@@ -60,7 +52,7 @@ private:
 //                   共享内存自动锁（自动加锁解锁）
 //
 //==============================================================================
-class MY_EXT_CLASS CShmAutoLock
+class EXT_CLASS CShmAutoLock
 {
 public:
 	CShmAutoLock(CSharedMemLock* pLock);
