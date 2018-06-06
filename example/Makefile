@@ -21,7 +21,7 @@ OUTPUT = shm_create.out shm_attach.out
 
 all: ${OUTPUT}
 
-%.out: %.cpp
+%.out: %.cpp ../libshm
 	$(CXX) $(CXXFLAGS) $(INCS) $< ../libshm -o $@
 
 #${OUTPUT}: $(OBJS)

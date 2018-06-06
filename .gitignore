@@ -36,3 +36,5 @@ GPATH
 GRTAGS
 GTAGS
 
+# project temp file
+libshm

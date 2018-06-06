@@ -6,7 +6,7 @@ AR	 = ar rc
 
 CXX_STD = -std=c++0x
 DEBUG_FLAG = -g
-WARNING_FLAGS = -Wall -Wextra -pedantic
+WARNING_FLAGS = -Wall -Wextra
 CXX_MACROS = -DDEBUG
 EXTRA_FLAGS = -Wfatal-errors
 CXXFLAGS = $(CXX_STD) $(DEBUG_FLAG) $(WARNING_FLAGS) $(CXX_MACROS) \

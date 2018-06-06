@@ -6,9 +6,10 @@
 //==============================================================================
 
 #include "SharedMemOper.h"
-#include "SharedMemDef.h"
 #include <errno.h>
 #include <cstring>
+#include "SharedMemDef.h"
+#include "Log.h"
 
 //==============================================================================
 //
@@ -16,6 +17,7 @@
 //                   共享内存操作类
 //
 //==============================================================================
+
 CSharedMemOper::CSharedMemOper()
 	: m_objShmId(SHM_ID_INVALID),
 	  m_objShmKey(SHM_KEY_INVALID),
@@ -37,52 +39,50 @@ void CSharedMemOper::SetSharedMemKey(shmkey_t objShmKey)
 
 bool CSharedMemOper::CreateSharedMem(size_t nSize)
 {
-    /*
-      LogImportant("CSharedMemOper::CreateSharedMem, 开始创建共享内存，shmkey=" SHM_KEY_FMT
-      ", size=%u",
-      SHM_KEY_VAL(m_objShmKey), nSize);
-    */
-	if (m_objShmKey == SHM_KEY_INVALID)
+    Log("CSharedMemOper::CreateSharedMem, start to create sharedmemory，shmkey="
+        SHM_KEY_FMT ", size=%u\n",
+        SHM_KEY_VAL(m_objShmKey), nSize);
+
+    if (m_objShmKey == SHM_KEY_INVALID)
 	{
-        //	LogImportant("[ERROR] CSharedMemOper::CreateSharedMem, 指定的Key无效!");
-		return false;
+        Log("[ERROR] CSharedMemOper::CreateSharedMem, invalid key!\n");
+        return false;
 	}
 	
 	// 要创建共享内存
 	// 可能出现程序异常退出，共享内存残留的情况
 #if defined(OS_UNIX)
-	m_objShmId = shmget(m_objShmKey, 0, 0);	// 映射
+	m_objShmId = shmget(m_objShmKey, 0, 0);
 #elif defined(OS_WIN)
-	m_objShmId = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, m_objShmKey.c_str());
+    m_objShmId = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, m_objShmKey.c_str());
 #endif
-	if (m_objShmId != SHM_ID_INVALID)
-	{
-		// 共享内存已经存在
-        /*
-          LogImportant("[WARN] CSharedMemOper::CreateSharedMem, 创建共享内存前删除已有的(shmkey=" SHM_KEY_FMT ")",
-					 SHM_KEY_VAL(m_objShmKey));
-        */
-		ReleaseSharedMem();
-	}
+    if (m_objShmId != SHM_ID_INVALID)
+    {
+        // 共享内存已经存在
+        Log("[WARN] CSharedMemOper::CreateSharedMem, 创建共享内存前删除已有的(shmkey=" SHM_KEY_FMT ")\n",
+            SHM_KEY_VAL(m_objShmKey));
 
-	// 创建：在Linux环境中，对开始申请的共享内存空间进行了初始化，初始值为0x00
-	// IPC_CREAT：如果不存在与key相等的共享内存，则新建；如果存在，返回此共享内存的标识符(但是如果新size比原有的大会出错)
+        ReleaseSharedMem();
+    }
+
+    // 创建：在Linux环境中，对开始申请的共享内存空间进行了初始化，初始值为0x00
+    // IPC_CREAT：如果不存在与key相等的共享内存，则新建；如果存在，返回此共享内存的标识符(但是如果新size比原有的大会出错)
 #if defined(OS_UNIX)
 	m_objShmId = shmget(m_objShmKey, nSize, IPC_CREAT|0664);
 #elif defined(OS_WIN)
-	m_objShmId = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, (DWORD)nSize, m_objShmKey.c_str());
+	m_objShmId = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0,
+                                   (DWORD)nSize, m_objShmKey.c_str());
 #endif
 	if (m_objShmId == SHM_ID_INVALID)
 	{
-        /*
-          LogImportant("[ERROR] CSharedMemOper::CreateSharedMem, allocate shared mem fail, shmkey=" SHM_KEY_FMT
-					 ", errno=%d, strerror(errno)=%s",
-					 SHM_KEY_VAL(m_objShmKey), nSize, errno, strerror(errno));
-        */
+        Log("[ERROR] CSharedMemOper::CreateSharedMem, allocate shared mem fail, shmkey="
+            SHM_KEY_FMT ", errno=%d, strerror(errno)=%s\n",
+            SHM_KEY_VAL(m_objShmKey), nSize, errno, strerror(errno));
+
 		return false;
 	}
 	
-    //	LogImportant("CSharedMemOper::CreateSharedMem, allocate shm succeed, shmid=%d", m_objShmId);
+    Log("CSharedMemOper::CreateSharedMem, allocate shm succeed, shmid=%d\n", m_objShmId);
 
 #if defined(OS_UNIX)
 	m_pShmAddr = shmat(m_objShmId, NULL, 0);
@@ -91,8 +91,8 @@ bool CSharedMemOper::CreateSharedMem(size_t nSize)
 #endif
 	if (((void*)-1)==m_pShmAddr || NULL==m_pShmAddr)
 	{
-        //	LogImportant("[ERROR] CSharedMemOper::CreateSharedMem, attach shm fail, shmid=%d, errno=%d, info=%s",
-        //                         m_objShmId, errno, strerror(errno));
+        Log("[ERROR] CSharedMemOper::CreateSharedMem, attach shm fail, shmid=%d, errno=%d, info=%s\n",
+            m_objShmId, errno, strerror(errno));
         
         ReleaseSharedMem();
 		return false;
@@ -100,11 +100,10 @@ bool CSharedMemOper::CreateSharedMem(size_t nSize)
 
 	// 映射成功后，记录共享内存大小
 	m_nShmSize = nSize;
+    
+    Log("CSharedMemOper::CreateSharedMem, create succeed, m_nShmId=%d, m_pShmAddr=0x%x, m_nShmSize=%u",
+        m_objShmId, m_pShmAddr, m_nShmSize);
 
-    /*
-      LogImportant("CSharedMemOper::CreateSharedMem, create succeed, m_nShmId=%d, m_pShmAddr=0x%x, m_nShmSize=%u",
-				 m_objShmId, m_pShmAddr, m_nShmSize);
-    */
 	return true;
 }
 
@@ -124,11 +123,9 @@ bool CSharedMemOper::AttachSharedMem()
 #endif
 	if (m_objShmId == SHM_ID_INVALID)
 	{
-        /*
-          LogImportant("CSharedMemOper::AttachShardeMem, shmget fail, key=" SHM_KEY_FMT
-					 ", errno=%d, strerror(errno)=%s",
-					 SHM_KEY_VAL(m_objShmKey), errno, strerror(errno));
-        */
+        Log("CSharedMemOper::AttachShardeMem, shmget fail, key=" SHM_KEY_FMT
+            ", errno=%d, strerror(errno)=%s\n",
+            SHM_KEY_VAL(m_objShmKey), errno, strerror(errno));
         return false;
 	}
 
@@ -139,10 +136,8 @@ bool CSharedMemOper::AttachSharedMem()
 #endif
 	if (((void*)-1)==m_pShmAddr || NULL==m_pShmAddr)
 	{
-        /*
-          LogImportant("CSharedMemOper::AttachSharedMem, shmat fail, shmid=%d, errno=%d, info=%s",
-					 m_objShmId, errno, strerror(errno));
-        */
+        Log("CSharedMemOper::AttachSharedMem, shmat fail, shmid=%d, errno=%d, info=%s\n",
+            m_objShmId, errno, strerror(errno));
         
 		DetachSharedMem();
 		return false;
@@ -154,11 +149,11 @@ bool CSharedMemOper::AttachSharedMem()
 	if(0 == shmctl(m_objShmId, IPC_STAT, &objShmStat))
 	{
 		m_nShmSize = objShmStat.shm_segsz;
-		//LogImportant("CSharedMemOper::AttachSharedMem, attached shm size=%u", m_nShmSize);
+		Log("CSharedMemOper::AttachSharedMem, attached shm size=%u\n", m_nShmSize);
 	}
 	else
 	{
-        //		LogImportant("CSharedMemOper::AttachSharedMem, fail to get shm size after attch succeed");
+        Log("CSharedMemOper::AttachSharedMem, fail to get shm size after attch succeed\n");
 	}
 #endif
 	return true;
@@ -171,7 +166,7 @@ bool CSharedMemOper::DetachSharedMem()
 		return false;
 	}
 
-    //	LogImportant("CSharedMemOper::DetachSharedMem, shmdt shmid=%d", m_objShmId);
+    Log("CSharedMemOper::DetachSharedMem, shmdt shmid=%d\n", m_objShmId);
 
 #if defined(OS_UNIX)
 	bool bRet = (shmdt(m_pShmAddr) == 0);
@@ -186,7 +181,8 @@ bool CSharedMemOper::DetachSharedMem()
 		return true;
 	}
 
-    //	LogImportant("CSharedMemOper::DetachSharedMem, detach shm fail, errno=%d, %s", errno, strerror(errno));
+ 	Log("CSharedMemOper::DetachSharedMem, detach shm fail, errno=%d, %s\n",
+        errno, strerror(errno));
 
 	return false;
 }
@@ -198,8 +194,9 @@ bool CSharedMemOper::ReleaseSharedMem()
 
 	if (SHM_ID_INVALID == objShmIdTmp)
 	{
-        //		LogImportant("[WARN] CSharedMemOper::ReleaseSharedMem, release shmid is invalid (shmid=%d)!", objShmIdTmp);
-		return false;
+        Log("[WARN] CSharedMemOper::ReleaseSharedMem, release shmid is invalid (shmid=%d)!\n",
+            objShmIdTmp);
+        return false;
 	}
 
 #if defined(OS_UNIX)
@@ -217,7 +214,8 @@ bool CSharedMemOper::ReleaseSharedMem()
 	else
 	{
 		m_objShmId = objShmIdTmp;
-        //		LogImportant("[ERROR] CSharedMemOper::ReleaseSharedMem, release shm fail, errno=%d, %s", errno, strerror(errno));
+        Log("[ERROR] CSharedMemOper::ReleaseSharedMem, release shm fail, errno=%d, %s\n",
+            errno, strerror(errno));
 	}
 	
 	return false;
