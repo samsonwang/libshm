@@ -9,24 +9,19 @@ DEBUG_FLAG = -g
 WARNING_FLAGS = -Wall -Wextra
 CXX_MACROS = -DDEBUG
 EXTRA_FLAGS = -Wfatal-errors
-CXXFLAGS = $(CXX_STD) $(DEBUG_FLAG) $(WARNING_FLAGS) $(CXX_MACROS) \
-		-ftemplate-depth-25 $(EXTRA_FLAGS)
-
+CXXFLAGS = $(CXX_STD) $(DEBUG_FLAG) $(WARNING_FLAGS) $(CXX_MACROS) $(EXTRA_FLAGS)
 INCS = 
 
 SRCS = $(wildcard *.cpp)
 OBJS = $(patsubst %.cpp, %.o, $(SRCS))
-
-TEMPFILE = *.o *.out core.* core
-
 OUTPUT = libshm
+TEMPFILE = *.o *.out core.* core
 
 all: ${OUTPUT}
 
 ${OUTPUT}: $(OBJS)
 	$(AR) $@ $(OBJS) $(EXTRA_LIB)
 
-# Rules for compiling source files to object files
 .cpp.o:
 	${CXX} -c ${CXXFLAGS} ${INCS} $< -o $@
 
